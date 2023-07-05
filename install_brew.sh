@@ -1,32 +1,49 @@
 #!/bin/bash
 
+# Path
 BREW_DIR="$HOME/goinfre/.brew"
 ZSHRC_PATH="$HOME/.zshrc"
 
+# Color variables
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+RESET='\033[0m'
+
 # Check if Homebrew is already installed in the desired location
 if [ -d "$BREW_DIR" ]; then
-  echo "Done. Homebrew already installed in goinfre"
+  echo "Homebrew already installed in goinfre."
   exit 0
 fi
 
-# Remove existing .brew directory if it exists
-if [ -d "$HOME/.brew" ]; then
-  rm -rf "$HOME/.brew"
+read -p "Do you want to install Homebrew in goinfre? (y/n): " choice
+
+if [[ $choice == "y" || $choice == "Y" ]]; then
+
+  # Remove existing .brew directory if it exists
+  echo -e "${YELLOW}Installing Homebrew...${RESET}"
+  if [ -d "$HOME/.brew" ]; then
+    rm -rf "$HOME/.brew"
+  fi
+
+  # Clone Homebrew repository to the desired location
+  git clone https://github.com/Homebrew/brew "$BREW_DIR"
+
+  # Add Homebrew to the PATH and source .zshrc
+  echo "export PATH=$BREW_DIR/bin:$PATH" >> "$ZSHRC_PATH"
+  source "$ZSHRC_PATH"
+
+  # Update Homebrew
+  brew update
+
+  # Install packages
+  brew install node
+  brew install postgresql@14
+
+  echo -e "${BLUE}Homebrew installed successfully!${RESET}"
+elif [[ $choice == "n" || $choice == "N" ]]; then
+    echo -e "${YELLOW}Skipping Homebrew installation.${RESET}"
+else
+    echo -e "${RED}Invalid choice. Please enter 'y' or 'n'.${RESET}"
 fi
-
-# Clone Homebrew repository to the desired location
-git clone https://github.com/Homebrew/brew "$BREW_DIR"
-
-# Add Homebrew to the PATH and source .zshrc
-echo "export PATH=$BREW_DIR/bin:$PATH" >> "$ZSHRC_PATH"
-source "$ZSHRC_PATH"
-
-# Update Homebrew
-brew update
-
-# Install packages
-brew install node
-brew install postgresql@14
-
-echo "Done. Homebrew successfully installed in goinfre"
-
