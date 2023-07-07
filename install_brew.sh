@@ -3,6 +3,7 @@
 # Path
 BREW_DIR="$HOME/goinfre/.brew"
 ZSHRC_PATH="$HOME/.zshrc"
+SKIP_FILE="$HOME/goinfre/.skip_brew_install"
 
 # Color variables
 RED='\033[0;31m'
@@ -15,6 +16,11 @@ RESET='\033[0m'
 if [ -d "$BREW_DIR" ]; then
   echo "Homebrew already installed in goinfre."
   exit 0
+fi
+
+# Check if the skip file exists
+if [ -f "$SKIP_FILE" ]; then
+    exit 0
 fi
 
 read -p "Do you want to install Homebrew in goinfre? (y/n): " choice
@@ -43,7 +49,8 @@ if [[ $choice == "y" || $choice == "Y" ]]; then
 
   echo -e "${BLUE}Homebrew installed successfully!${RESET}"
 elif [[ $choice == "n" || $choice == "N" ]]; then
-    echo -e "${YELLOW}Skipping Homebrew installation.${RESET}"
+    echo -e "${YELLOW}Skip Homebrew installation.${RESET}"
+    touch ${SKIP_FILE}
 else
     echo -e "${RED}Invalid choice. Please enter 'y' or 'n'.${RESET}"
 fi
